@@ -1,19 +1,16 @@
-// src/pages/MainPage.jsx
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 
-const items = [
-    { id: 1, name: "Thing One" },
-    { id: 2, name: "Thing Two" },
-];
+export default function MainPage({ scenarios }) {
+    const navigate = useNavigate();
 
-export default function MainPage() {
     return (
         <div>
             <h1>Main Page</h1>
+            <button onClick={() => navigate('/add')}>+</button>
             <ul>
-                {items.map((item) => (
-                    <li key={item.id}>
-                        <Link to={`/detail/${item.id}`}>{item.name}</Link>
+                {scenarios.map(({ id, text }) => (
+                    <li key={id}>
+                        <Link to={`/detail/${id}`}>{text.slice(0, 30)}...</Link>
                     </li>
                 ))}
             </ul>
