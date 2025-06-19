@@ -1,10 +1,14 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 export default function DetailPage({ scenarios, updateScenario }) {
     const { id } = useParams();
     const navigate = useNavigate();
-    const scenario = scenarios.find((s) => s.id === Number(id)) || {};
+
+    const scenario = useMemo(() => {
+        return scenarios.find((s) => s.id === Number(id)) || {};
+    }, [scenarios, id]);
+
     const [text, setText] = useState(scenario.text || '');
 
     useEffect(() => {
