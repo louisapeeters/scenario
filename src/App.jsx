@@ -4,6 +4,8 @@ import MainPage from './pages/MainPage';
 import DetailPage from './pages/DetailPage';
 import AddScenarioPage from './pages/AddScenarioPage';
 import { supabase } from './supabaseClient';
+import './styles/main-page.css';
+import './styles/base.css';
 
 function App() {
   const [scenarios, setScenarios] = useState([]);
@@ -22,24 +24,32 @@ function App() {
     else setScenarios(data);
   }
 
-  async function addScenario(title, text) {
+  async function addScenario(title, text, formatSegments = []) {
     const { data, error } = await supabase
       .from('scenarios')
-      .insert([{ title, text }])
+      .insert([{
+        title,
+        text,
+        formatsegments: formatSegments
+      }])
       .select();
 
     if (error) console.error('Insert error:', error);
     else setScenarios((prev) => [...prev, data[0]]);
   }
 
-  async function updateScenario(id, newTitle, newText) {
+  async function updateScenario(id, newTitle, newText, formatSegments = []) {
     const { error } = await supabase
       .from('scenarios')
-      .update({ title: newTitle, text: newText })
+      .update({
+        title: newTitle,
+        text: newText,
+        formatsegments: formatSegments
+      })
       .eq('id', id);
 
     if (error) console.error('Update error:', error);
-    else fetchScenarios(); // refresh
+    else fetchScenarios();
   }
 
   async function deleteScenario(id) {

@@ -6,7 +6,6 @@
   "homepage": "https://louisapeeters.github.io/scenario",
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
@@ -16,6 +15,7 @@
     "@remix-run/router": "^1.23.0",
     "@supabase/supabase-js": "^2.50.0",
     "axios": "^1.10.0",
+    "html2pdf.js": "^0.10.3",
     "lucide-react": "^0.518.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

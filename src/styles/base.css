@@ -1,0 +1,80 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', monospace;
+    background: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+#root {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    /* Force full width */
+}
+
+.main-container {
+    flex: 1;
+    padding: 2rem;
+    max-width: none;
+    /* Remove max-width constraint */
+    margin: 0;
+    width: 100%;
+    background: #f8f9fa;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        padding: 1rem;
+    }
+}
+
+@media print {
+
+    .editor-sidebar,
+    .editor-header {
+        display: none !important;
+    }
+
+    .editor-layout,
+    .editor-workspace {
+        background: white;
+        padding: 0;
+    }
+
+    .document-page {
+        box-shadow: none;
+        margin: 0;
+        width: 100%;
+        min-height: auto;
+        border-radius: 0;
+        page-break-after: always;
+    }
+
+    .document-textarea {
+        color: black !important;
+        font-family: 'Courier New', monospace;
+    }
+
+    .document-page:last-child {
+        page-break-after: auto;
+    }
+}
