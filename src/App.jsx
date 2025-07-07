@@ -3,16 +3,27 @@ import { HashRouter, Routes, Route } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import DetailPage from './pages/DetailPage';
 import AddScenarioPage from './pages/AddScenarioPage';
+import LoginPage from './pages/LoginPage';
 import { supabase } from './supabaseClient';
 import './styles/main-page.css';
 import './styles/base.css';
 
 function App() {
   const [scenarios, setScenarios] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    fetchScenarios();
+    const authStatus = sessionStorage.getItem('siteAuthenticated');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
+    }
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchScenarios();
+    }
+  }, [isAuthenticated]);
 
   async function fetchScenarios() {
     const { data, error } = await supabase
@@ -62,19 +73,44 @@ function App() {
     else setScenarios((prev) => prev.filter((s) => s.id !== id));
   }
 
+  function handleLogin(password) {
+    if (password === 'neverForget') {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('siteAuthenticated', 'true');
+      return true;
+    }
+    return false;
+  }
+
+  function handleLogout() {
+    setIsAuthenticated(false);
+    sessionStorage.removeItem('siteAuthenticated');
+  }
+
+  if (!isAuthenticated) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
   return (
     <HashRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={<MainPage scenarios={scenarios} deleteScenario={deleteScenario} />}
-        />
-        <Route path="/add" element={<AddScenarioPage addScenario={addScenario} />} />
-        <Route
-          path="/detail/:id"
-          element={<DetailPage scenarios={scenarios} updateScenario={updateScenario} />}
-        />
-      </Routes>
+      <div className="app-container">
+        <header className="app-header">
+          <button className="logout-button" onClick={handleLogout}>
+            Exit
+          </button>
+        </header>
+        <Routes>
+          <Route
+            path="/"
+            element={<MainPage scenarios={scenarios} deleteScenario={deleteScenario} />}
+          />
+          <Route path="/add" element={<AddScenarioPage addScenario={addScenario} />} />
+          <Route
+            path="/detail/:id"
+            element={<DetailPage scenarios={scenarios} updateScenario={updateScenario} />}
+          />
+        </Routes>
+      </div>
     </HashRouter>
   );
 }

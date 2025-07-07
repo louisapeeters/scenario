@@ -1,14 +1,33 @@
 import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
 
 export default function MainPage({ scenarios, deleteScenario }) {
     const navigate = useNavigate();
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
 
     async function handleDelete(id, event) {
         event.preventDefault(); // Prevent navigation when clicking delete
         event.stopPropagation();
-        if (window.confirm('Are you sure you want to delete this scenario?')) {
-            await deleteScenario(id);
+
+        setItemToDelete(id);
+        setDeleteModalOpen(true);
+    }
+
+    async function confirmDelete(password) {
+        if (password === 'neverRemember') {
+            await deleteScenario(itemToDelete);
+            setDeleteModalOpen(false);
+            setItemToDelete(null);
+            return true;
         }
+        return false;
+    }
+
+    function cancelDelete() {
+        setDeleteModalOpen(false);
+        setItemToDelete(null);
     }
 
     // Function to create a preview of the text content
@@ -56,6 +75,13 @@ export default function MainPage({ scenarios, deleteScenario }) {
                     </div>
                 )}
             </div>
+
+            {deleteModalOpen && (
+                <DeleteConfirmModal
+                    onConfirm={confirmDelete}
+                    onCancel={cancelDelete}
+                />
+            )}
         </div>
     );
 }
