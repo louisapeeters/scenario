@@ -4,7 +4,7 @@ import html2pdf from 'html2pdf.js';
 export default function EditorToolbar({
     currentFormat,
     setCurrentFormat,
-    textAreaRef,
+    editorRef,
     text,
     title,
     formatSegments,
@@ -49,26 +49,33 @@ export default function EditorToolbar({
 
     function setLocationFormat() {
         setCurrentFormat('location');
-        focusTextarea();
+        focusEditor();
     }
+
     function setNarrationFormat() {
         setCurrentFormat('narration');
-        focusTextarea();
+        focusEditor();
     }
+
     function setCharacterFormat() {
         setCurrentFormat('character');
-        focusTextarea();
+        focusEditor();
     }
+
     function setDialogueFormat() {
         setCurrentFormat('dialogue');
-        focusTextarea();
+        focusEditor();
     }
+
     function setEmotionFormat() {
         setCurrentFormat('emotion');
-        focusTextarea();
+        focusEditor();
     }
-    function focusTextarea() {
-        if (textAreaRef.current) textAreaRef.current.focus();
+
+    function focusEditor() {
+        if (editorRef.current) {
+            editorRef.current.focus();
+        }
     }
 
     function generateFormattedHtmlForPDF() {
@@ -78,10 +85,10 @@ export default function EditorToolbar({
 
         const elements = [];
         let lastEnd = 0;
-
         const sortedSegments = [...formatSegments].sort((a, b) => a.start - b.start);
 
         sortedSegments.forEach((segment) => {
+            // Add unformatted text before this segment
             if (segment.start > lastEnd) {
                 const unformattedText = text.substring(lastEnd, segment.start).replace(/\n/g, '<br/>');
                 if (unformattedText.trim()) {
@@ -89,8 +96,14 @@ export default function EditorToolbar({
                 }
             }
 
-            const segmentText = text.substring(segment.start, segment.end).replace(/\n/g, '<br/>');
+            // Add formatted segment
+            let segmentText = text.substring(segment.start, segment.end).replace(/\n/g, '<br/>');
             if (segmentText.trim()) {
+                // Add parentheses around emotion text
+                if (segment.format === 'emotion') {
+                    segmentText = `(${segmentText})`;
+                }
+
                 const style = getPDFFormatStyle(segment.format);
                 elements.push(`<div style="${style}">${segmentText}</div>`);
             }
@@ -98,6 +111,7 @@ export default function EditorToolbar({
             lastEnd = segment.end;
         });
 
+        // Add remaining unformatted text
         if (lastEnd < text.length) {
             const remainingText = text.substring(lastEnd).replace(/\n/g, '<br/>');
             if (remainingText.trim()) {
@@ -159,7 +173,6 @@ export default function EditorToolbar({
 
     return (
         <div className="sidebar-tools">
-
             <div className="tools-section">
                 <span className="tools-label">Text Formatting</span>
                 <div className="tools-group">
@@ -194,7 +207,7 @@ export default function EditorToolbar({
                     <button
                         className={`tool-btn ${currentFormat === 'emotion' ? 'active' : ''}`}
                         onClick={setEmotionFormat}
-                        title="Emotion (Cmd+E) - Center aligned, italic, max width 20rem"
+                        title="Emotion (Cmd+E) - Center aligned, italic, max width 20rem, wrapped in parentheses"
                     >
                         😊
                     </button>

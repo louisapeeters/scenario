@@ -17,6 +17,11 @@ function App() {
     if (authStatus === 'true') {
       setIsAuthenticated(true);
     }
+
+    if (window.location.hash === '' || window.location.hash === '#/' || window.location.hash === '#') {
+      setIsAuthenticated(false);
+      sessionStorage.removeItem('siteAuthenticated');
+    }
   }, []);
 
   useEffect(() => {
@@ -96,7 +101,7 @@ function App() {
       <div className="app-container">
         <header className="app-header">
           <button className="logout-button" onClick={handleLogout}>
-            Exit
+            Logout
           </button>
         </header>
         <Routes>
